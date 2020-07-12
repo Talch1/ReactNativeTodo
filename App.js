@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, FlatList } from 'react-native'
+import { StyleSheet, Text, View, FlatList ,Alert} from 'react-native'
 import { Navbar } from './src/componets/Navbar'
+import { MainScreen } from './src/screens/MainScreen'
+import {TodoScreen} from './src/screens/TodoScrean'
 
 export default function App() {
   const [todos, setTodos] = useState([])
+  const [todoId,setTodoId] = useState(null);
 
   const addTodo = title => {
 
@@ -15,17 +18,46 @@ export default function App() {
       }
     ])
   }
+  let context= ( <MainScreen
+    addTodo = {addTodo} todos= {todos} removeTodo ={(todoId)=>
+       {removeTodo(todoId)}} openTodo = {setTodoId}
+    />)
   const removeTodo = id =>{
-    setTodos(prev => prev.filter(todo =>todo.id !==id))
+    const todoTitle = todos.find(t =>t.id ===id) 
+    // Works on both Android and iOS
+Alert.alert(
+  'Deleting of todo',
+  `Do you want to delete ${todoTitle.title}`,
+  [
+
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel'
+    },
+    { text: 'Delete', onPress: () => {setTodoId(null)
+      setTodos(prev => prev.filter(todo =>todo.id !==id)) }}
+  ],
+  { cancelable: false }
+);
+  
   }
 
+  
+if(todoId){
+  const selectedId = todos.find(todo=>todo.id ===todoId)
+  context = 
+  <TodoScreen
+    backToApp = {() => {setTodoId(null)}}
+     todo={selectedId}
+   onRemove = {removeTodo}/>
+}
   return (
     <View>
       <Navbar title='Todo App!' />
       <View style={styles.container}>
-     
+       {context}
       </View>
-
     </View>
   )
 }

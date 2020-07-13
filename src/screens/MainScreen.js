@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, View, FlatList, Text ,Image} from "react-native";
+import { StyleSheet, View, FlatList, Image} from "react-native";
 import { AddTodo } from "../componets/AddTodo";
 import { Todo } from "../componets/Todo";
+
 export const MainScreen = ({ addTodo, todos, removeTodo, openTodo }) => {
   let content = (
     <FlatList
@@ -20,8 +21,9 @@ export const MainScreen = ({ addTodo, todos, removeTodo, openTodo }) => {
   );
 
   if(todos.length===0){
-    content = <View>
+    content = <View style={styles.imgWrap}>
       <Image
+      style={styles.image}
       source={require('../../assets/no-items.png')}/>
     </View>
   }
@@ -32,4 +34,15 @@ export const MainScreen = ({ addTodo, todos, removeTodo, openTodo }) => {
     </View>
   );
 };
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  imgWrap:{
+    alignItems:'center',
+    justifyContent:'center',
+    height:300
+  },
+  image:{
+    resizeMode:'cover',
+    width:'100%',
+    height:'100%'
+  }
+});

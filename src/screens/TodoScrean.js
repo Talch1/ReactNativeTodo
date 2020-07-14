@@ -1,17 +1,22 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, Button } from "react-native";
+import { View, StyleSheet, Dimensions} from "react-native";
 import { THEME } from "../theme";
 import { AppCard } from "../componets/ui/AppCard";
 import { EditModal } from "../componets/EditModal";
 import { AppTextBolt } from "../componets/ui/AppTextBolt";
+import { AppButtons } from "../componets/ui/AppButtons";
+import { AntDesign ,FontAwesome} from "@expo/vector-icons";
+
 
 export const TodoScreen = ({ backToApp, todo, onRemove, onSav }) => {
   const [modal, setModal] = useState(false);
+
 
   saveHandel = (title) => {
     setModal(false);
     onSav(todo.id, title);
   };
+
   return (
     <View>
       <EditModal
@@ -24,24 +29,30 @@ export const TodoScreen = ({ backToApp, todo, onRemove, onSav }) => {
       />
       <AppCard style={styles.card}>
         <AppTextBolt style={styles.textim}>{todo.title}</AppTextBolt>
-        <Button
-          title="redact"
+        <AppButtons
           onPress={() => {
             setModal(true);
           }}
-        />
+        ><FontAwesome
+        size ={20}
+        name = 'edit'
+        /></AppButtons>
       </AppCard>
 
       <View style={styles.buttons}>
         <View style={styles.button}>
-          <Button title="back" color={THEME.GRAY_COLOR} onPress={backToApp} />
+          <AppButtons  color={THEME.GRAY_COLOR} onPress={backToApp} >
+            <AntDesign name ='back'
+            size={20}/>
+            </AppButtons>
         </View>
         <View style={styles.button}>
-          <Button
+          <AppButtons
             color={THEME.DANGER_COLOR}
-            title="delete"
-            onPress={() => onRemove(todo.id)}
-          />
+            onPress={() => onRemove(todo.id)}>
+                  <AntDesign name ='delete'
+            size={20}/>
+          </AppButtons>
         </View>
       </View>
     </View>
@@ -54,7 +65,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   button: {
-    width: "40%",
+    width: Dimensions.get('window').width /3,
   },
   textim: {
     fontSize: 26,

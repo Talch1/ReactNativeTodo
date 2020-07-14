@@ -8,6 +8,8 @@ import {
   Alert,
 } from "react-native";
 import { THEME } from "../theme";
+import { AppButtons } from "./ui/AppButtons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export const EditModal = ({ visible, value, onCancel, onSave }) => {
   const [tit, setTit] = useState(value);
@@ -29,14 +31,15 @@ export const EditModal = ({ visible, value, onCancel, onSave }) => {
           style={styles.textIn}
           maxLength={64}
           onChangeText={setTit}
+          
         />
         <View style={styles.buttons}>
-          <Button
-            title="cancel"
+          <AppButtons
             onPress={onCancel}
-            color={THEME.DANGER_COLOR}
-          />
-          <Button title="save " onPress={onHandleSave} />
+            color = {THEME.DANGER_COLOR}
+          ><MaterialIcons name="cancel" size={30} /></AppButtons>
+          <AppButtons onPress={onHandleSave}><MaterialIcons name="save" size={30} />
+          </AppButtons> 
         </View>
       </View>
     </Modal>
@@ -50,6 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   textIn: {
+    fontSize:20,
     padding: 10,
     borderBottomColor: THEME.MAIN_COLOR,
     borderBottomWidth: 2,

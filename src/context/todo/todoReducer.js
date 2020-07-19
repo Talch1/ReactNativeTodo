@@ -1,34 +1,45 @@
-import { ADD_TODO, REMOVE_TODO, UPDATE_TODO } from '../types'
-
+import {
+  ADD_TODO,
+  REMOVE_TODO,
+  UPDATE_TODO,
+  SHOW_LOADIND,
+  HIDE_LOADIND,
+  CLEAR_ERROR,
+  SHOW_ERROR,
+  FETCH_TODOS,
+} from "../types";
 
 const handlers = {
-  [ADD_TODO]: (state, { title }) => ({
+  [ADD_TODO]: (state,{ title,id} ) => ({
     ...state,
     todos: [
       ...state.todos,
-      {
-        id: Date.now().toString(),
-        title
-      }
-    ]
+      {id,title},
+    ],
   }),
   [REMOVE_TODO]: (state, { id }) => ({
     ...state,
-    todos: state.todos.filter(todo => todo.id !== id),
+    todos: state.todos.filter((todo) => todo.id !== id),
   }),
   [UPDATE_TODO]: (state, { title, id }) => ({
     ...state,
-    todos: state.todos.map(todo => {
+    todos: state.todos.map((todo) => {
       if (todo.id === id) {
-        todo.title = title
+        todo.title = title;
       }
-      return todo
-    })
+      return todo;
+    }),
   }),
-  DEFAULT: state => state
-}
+  [SHOW_LOADIND]: (state) => ({ ...state, loading: true }),
+  [HIDE_LOADIND]: (state) => ({ ...state, loading: false }),
+  [CLEAR_ERROR]: (state) => ({ ...state, error: null }),
+  [SHOW_ERROR]: (state, {error}) => ({ ...state, error }),
+  [FETCH_TODOS]:(state,{todod}) =>({...state,todos}),
+
+  DEFAULT: (state) => state,
+};
 
 export const todoReducer = (state, action) => {
-  const handler = handlers[action.type] || handlers.DEFAULT
-  return handler(state, action)
-}
+  const handler = handlers[action.type] || handlers.DEFAULT;
+  return handler(state, action);
+};

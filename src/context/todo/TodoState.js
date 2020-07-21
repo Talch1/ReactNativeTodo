@@ -13,6 +13,7 @@ import {
 } from "../types";
 import { ScreenContext } from "../screen/screenContext";
 import { Alert } from "react-native";
+import { Http } from "../../http";
 
 export const TodoState = ({ children }) => {
   const initialState = {
@@ -24,19 +25,17 @@ export const TodoState = ({ children }) => {
   const [state, dispatch] = useReducer(todoReducer, initialState);
 
   const addTodo = async (title) => {
-    const response = await fetch(
+    clearError()
+    try {
+    const data =  await Http.post( 
       "https://reactnativetodoapp-a002e.firebaseio.com/todos.json",
-      {
-        method: "Post",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
-      }
-    );
-    const data = await response.json();
-
-    console.log("Data :", data);
-    dispatch({ type: ADD_TODO, title, id: data.name });
-  };
+      {title}
+      )
+    dispatch({ type: ADD_TODO, title, id: data.name })
+  }catch (e) {
+    showError('Somsing wrong')
+  }
+}
   const shoewLoader = () => dispatch({ type: SHOW_LOADIND });
   const hideLoader = () => dispatch({ type: HIDE_LOADIND });
   const clearError = () => dispatch({ type: CLEAR_ERROR });
@@ -47,25 +46,20 @@ export const TodoState = ({ children }) => {
 
     const todo = state.todos.find((t) => t.id === id);
     Alert.alert(
-      "Удаление элемента",
-      `Вы уверены, что хотите удалить "${todo.title}"?`,
+      "Delete Todo",
+      `Do you shore?"${todo.title}"?`,
       [
         {
-          text: "Отмена",
+          text: "Cancel",
           style: "cancel",
         },
         {
-          text: "Удалить",
+          text: "Delete",
           style: "destructive",
           onPress: async () => {
             changeScreen(null);
-          const response = await fetch(
-              `https://reactnativetodoapp-a002e.firebaseio.com/todos/${id}.json`,
-              {
-                method: "Delete",
-                headers: { "Content-Type": "application/json" },
-              }
-            );
+            const response = 
+            await Http.delete(`https://reactnativetodoapp-a002e.firebaseio.com/todos/${id}.json`);
             dispatch({ type: REMOVE_TODO, id });
           },
         },
@@ -77,14 +71,8 @@ export const TodoState = ({ children }) => {
   const updateTodo = async (id, title) => {
     clearError();
     try {
-      await fetch(
-        `https://reactnativetodoapp-a002e.firebaseio.com/todos/${id}.json`,
-        {
-          method: "PATCH",
-          headers: { "Context-Type": "aplication/json" },
-          body: JSON.stringify({ title }),
-        }
-      );
+      await Http.patch(`https://reactnativetodoapp-a002e.firebaseio.com/todos/${id}.json`
+      ,{title})
       dispatch({ type: UPDATE_TODO, id, title });
     } catch (e) {
       showError("somsing wrong");
@@ -96,24 +84,17 @@ export const TodoState = ({ children }) => {
     shoewLoader();
     clearError();
     try {
-      const response = await fetch(
-        "https://reactnativetodoapp-a002e.firebaseio.com/todos.json",
-        {
-          method: "Get",
-          headers: { "Context-Type": "aplication/json" },
-        }
+      const data = await Http.get(
+        "https://reactnativetodoapp-a002e.firebaseio.com/todos.json"
       );
-      const data = await response.json();
-      console.log("Fetch data", data);
+
       const todos = Object.keys(data).map((key) => ({ ...data[key], id: key }));
-      dispatch({ type: FETCH_TODOS, todos });
+      dispatch({ type: FETCH_TODOS, todos })
     } catch (e) {
       showError("somsing wrong");
       console.log(e);
     } finally {
-      setTimeout(() => {
         hideLoader();
-      }, 3000);
     }
   };
   return (
